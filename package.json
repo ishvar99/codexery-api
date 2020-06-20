@@ -1,0 +1,23 @@
+{
+  "name": "codexery-api",
+  "version": "1.0.0",
+  "description": "It is a bootcamp service API",
+  "main": "server.js",
+  "scripts": {
+    "start": "NODE_ENV=production node server",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "codexery-api"
+  },
+  "author": "Ishan Varshney",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  }
+}
