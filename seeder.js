@@ -1,9 +1,10 @@
-const fs = require('fs');
-const colors = require('colors');
-const Bootcamp = require('./models/bootcamp');
 const dotenv = require('dotenv');
-const mongoose = require('mongoose');
 dotenv.config({ path: './config/config.env' });
+const fs = require('fs');
+require('colors');
+const Bootcamp = require('./models/bootcamp');
+
+const mongoose = require('mongoose');
 
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, 'utf-8')
