@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const slugify = require('slugify');
 const geoSchema = new mongoose.Schema({
   type: {
     type: String,
@@ -95,5 +95,9 @@ const bootCampSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+bootCampSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
 });
 module.exports = mongoose.model('bootcamp', bootCampSchema);
