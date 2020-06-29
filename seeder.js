@@ -1,0 +1,45 @@
+const fs = require('fs');
+const colors = require('colors');
+const Bootcamp = require('./models/bootcamp');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+dotenv.config({ path: './config/config.env' });
+
+const bootcamps = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/bootcamps.json`, 'utf-8')
+);
+mongoose.connect(process.env.mongoURI, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: true,
+  useUnifiedTopology: true,
+});
+
+const importData = async () => {
+  try {
+    await Bootcamp.create(bootcamps);
+    console.log('Data Imported...'.green.inverse);
+    process.exit();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const destroyData = async () => {
+  try {
+    await Bootcamp.deleteMany({});
+    console.log('Data Destroyed...'.red.inverse);
+    process.exit();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+if (process.argv[2] === '-i') {
+  importData();
+} else if (process.argv[2] === '-d') {
+  destroyData();
+} else {
+  console.log('Invalid Request'.red.inverse);
+  process.exit();
+}
