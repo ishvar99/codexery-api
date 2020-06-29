@@ -3,31 +3,39 @@ const Bootcamp = require('../models/bootcamp');
 // @desc    Get all bootcamps
 // @route   /api/v1/bootcamps
 // @access  public
-exports.getBootcamps = async (req, res) => {
-  const bootcamps = await Bootcamp.find({});
-  res.status(200).json({
-    success: true,
-    count: bootcamps.length,
-    data: bootcamps,
-  });
+exports.getBootcamps = async (req, res, next) => {
+  try {
+    const bootcamps = await Bootcamp.find({});
+    res.status(200).json({
+      success: true,
+      count: bootcamps.length,
+      data: bootcamps,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Get all bootcamps
 // @route   /api/v1/bootcamps
 // @access  public
-exports.getBootcamp = async (req, res) => {
+exports.getBootcamp = async (req, res, next) => {
   const id = req.params.id;
-  const bootcamp = await Bootcamp.findById(id);
-  res.status(200).json({
-    success: true,
-    data: bootcamp,
-  });
+  try {
+    const bootcamp = await Bootcamp.findById(id);
+    res.status(200).json({
+      success: true,
+      data: bootcamp,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Get all bootcamps
 // @route   /api/v1/bootcamps
 // @access  private
-exports.createBootcamp = async (req, res) => {
+exports.createBootcamp = async (req, res, next) => {
   // const body = [];
   // req.on('data', (chunk) => {
   //   body.push(chunk);
@@ -36,11 +44,15 @@ exports.createBootcamp = async (req, res) => {
   //   const parsedBody = Buffer.concat(body).toString();
   //   console.log(parsedBody);
   // });
-  const bootcamp = await Bootcamp.create(req.body);
-  res.status(201).json({
-    success: true,
-    data: bootcamp,
-  });
+  try {
+    const bootcamp = await Bootcamp.create(req.body);
+    res.status(201).json({
+      success: true,
+      data: bootcamp,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Get all bootcamps
@@ -48,14 +60,18 @@ exports.createBootcamp = async (req, res) => {
 // @access  private
 exports.updateBootcamp = async (req, res) => {
   const id = req.params.id;
-  const updatedBootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!updatedBootcamp) {
-    return res.status(400).json({ success: false });
+  try {
+    const updatedBootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updatedBootcamp) {
+      return res.status(400).json({ success: false });
+    }
+    res.status(200).json({ success: true, data: updatedBootcamp });
+  } catch (error) {
+    next(error);
   }
-  res.status(200).json({ success: true, data: updatedBootcamp });
 };
 
 // @desc    Get all bootcamps
@@ -63,9 +79,13 @@ exports.updateBootcamp = async (req, res) => {
 // @access  private
 exports.deleteBootcamp = async (req, res) => {
   const id = req.params.id;
-  const deletedBootcamp = await Bootcamp.findByIdAndDelete(id);
-  if (!deletedBootcamp) {
-    return res.status(400).json({ success: false });
+  try {
+    const deletedBootcamp = await Bootcamp.findByIdAndDelete(id);
+    if (!deletedBootcamp) {
+      return res.status(400).json({ success: false });
+    }
+    res.json({ success: true, data: {} });
+  } catch (error) {
+    next(error);
   }
-  res.json({ success: true, data: {} });
 };
