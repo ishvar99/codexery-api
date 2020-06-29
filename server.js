@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const express = require('express');
+const colors = require('colors');
 dotenv.config({ path: './config/config.env' });
 const app = express();
 const PORT = process.env.PORT;
@@ -21,7 +22,7 @@ const server = app.listen(PORT, () => {
 });
 
 process.on('unhandledRejection', (err) => {
-  console.log(`Error: ${err.message}`);
+  console.log(`Error: ${err.message}`.red);
   //close and exit server
   server.close(() => process.exit(1));
 });
