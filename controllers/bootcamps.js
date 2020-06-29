@@ -1,5 +1,5 @@
 const Bootcamp = require('../models/bootcamp');
-
+const ErrorResponse = require('../utils/errorResponse');
 // @desc    Get all bootcamps
 // @route   /api/v1/bootcamps
 // @access  public
@@ -23,6 +23,9 @@ exports.getBootcamp = async (req, res, next) => {
   const id = req.params.id;
   try {
     const bootcamp = await Bootcamp.findById(id);
+    if (!bootcamp) {
+      return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
+    }
     res.status(200).json({
       success: true,
       data: bootcamp,
@@ -66,7 +69,7 @@ exports.updateBootcamp = async (req, res) => {
       runValidators: true,
     });
     if (!updatedBootcamp) {
-      return res.status(400).json({ success: false });
+      return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
     }
     res.status(200).json({ success: true, data: updatedBootcamp });
   } catch (error) {
@@ -82,7 +85,7 @@ exports.deleteBootcamp = async (req, res) => {
   try {
     const deletedBootcamp = await Bootcamp.findByIdAndDelete(id);
     if (!deletedBootcamp) {
-      return res.status(400).json({ success: false });
+      return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
     }
     res.json({ success: true, data: {} });
   } catch (error) {
