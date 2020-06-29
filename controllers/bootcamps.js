@@ -6,7 +6,13 @@ const geocoder = require('../utils/geocoder');
 // @route   /api/v1/bootcamps
 // @access  public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find({});
+  let queryString = JSON.stringify(req.query);
+  queryString = queryString.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+  let query = Bootcamp.find(JSON.parse(queryString));
+  const bootcamps = await query;
   res.status(200).json({
     success: true,
     count: bootcamps.length,
@@ -36,7 +42,7 @@ exports.getBootcampWithinRadius = asyncHandler(async (req, res, next) => {
   const loc = await geocoder.geocode(zipcode);
   const lat = loc[0].latitude;
   const lon = loc[0].longitude;
-  const radius = distance / 3963;
+  const radius = distance / 6378;
   const bootcamps = await Bootcamp.find({
     location: { $geoWithin: { $centerSphere: [[lon, lat], radius] } },
   });
