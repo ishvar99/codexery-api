@@ -10,9 +10,10 @@ if (process.env.NODE_ENV == 'development') {
   app.use(morgan('dev'));
 }
 connectDB();
+app.use(express.json());
 app.use('/api/v1/bootcamps', bootCampRoutes);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(
     `Server is running in ${process.env.NODE_ENV} mode on PORT ${PORT}`
   );
