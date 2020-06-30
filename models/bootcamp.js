@@ -109,6 +109,10 @@ bootCampSchema.virtual('courses', {
   foreignField: 'bootcamp', // bootcamp field of course model
   justOne: false,
 });
+bootCampSchema.pre('remove', async function (next) {
+  console.log(`Deleting courses for bootcamp ${this._id}`);
+  await this.model('Course').deleteMany({ bootcamp: this._id });
+});
 bootCampSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
