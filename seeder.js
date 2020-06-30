@@ -4,6 +4,7 @@ const fs = require('fs');
 require('colors');
 const Bootcamp = require('./models/bootcamp');
 const Course = require('./models/course');
+const User = require('./models/user');
 const mongoose = require('mongoose');
 
 const bootcamps = JSON.parse(
@@ -34,6 +35,7 @@ const destroyData = async () => {
   try {
     await Bootcamp.deleteMany({});
     await Course.deleteMany({});
+    await User.deleteMany({});
     console.log('Data Destroyed...'.red.inverse);
     process.exit();
   } catch (error) {
