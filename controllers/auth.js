@@ -28,7 +28,6 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   }
   sendTokenResponse(user, 200, res);
 });
-
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
   const options = {
@@ -45,3 +44,11 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
   });
 };
+
+// @desc    Get LoggedIn User
+// @route   GET /api/v1/auth/me
+// @access  private
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  return res.status(200).json({ success: true, data: user });
+});
