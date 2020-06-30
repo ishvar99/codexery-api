@@ -8,10 +8,10 @@ const app = express();
 const PORT = process.env.PORT;
 const bootCampRoutes = require('./routes/bootcamps');
 const courseRoutes = require('./routes/courses');
+const authRoutes = require('./routes/auth');
 const connectDB = require('./database/db');
 const morgan = require('morgan');
 const errorHandler = require('./middlewares/error');
-const course = require('./models/course');
 if (process.env.NODE_ENV == 'development') {
   app.use(morgan('dev'));
 }
@@ -21,6 +21,7 @@ app.use(express.static(path.join(__dirname + 'pubilc')));
 app.use(express.json());
 app.use('/api/v1/bootcamps', bootCampRoutes);
 app.use('/api/v1/courses', courseRoutes);
+app.use('/api/v1/auth', authRoutes);
 app.use(errorHandler);
 const server = app.listen(PORT, () => {
   console.log(
