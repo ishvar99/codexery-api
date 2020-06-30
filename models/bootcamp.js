@@ -116,4 +116,4 @@ bootCampSchema.pre('save', async function (next) {
   this.address = undefined;
   next();
 });
-module.exports = mongoose.model('bootcamp', bootCampSchema);
+module.exports = mongoose.model('Bootcamp', bootCampSchema);
