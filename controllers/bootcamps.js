@@ -3,7 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/asyncHandler');
 const geocoder = require('../utils/geocoder');
 // @desc    Get all bootcamps
-// @route   /api/v1/bootcamps
+// @route   GET /api/v1/bootcamps
 // @access  public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
   const reqQuery = { ...req.query };
@@ -58,8 +58,8 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Get all bootcamps
-// @route   /api/v1/bootcamps
+// @desc    Get single bootcamp
+// @route   GET /api/v1/bootcamps/:id
 // @access  public
 exports.getBootcamp = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
@@ -73,7 +73,7 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
   });
 });
 // @desc    Get bootcamps within the specified radius
-// @route   /api/v1/bootcamps/radius/:zipcode/:distance
+// @route   GET /api/v1/bootcamps/radius/:zipcode/:distance
 // @access  private
 exports.getBootcampWithinRadius = asyncHandler(async (req, res, next) => {
   const { zipcode, distance } = req.params;
@@ -91,8 +91,8 @@ exports.getBootcampWithinRadius = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Get all bootcamps
-// @route   /api/v1/bootcamps
+// @desc    Create a bootcamp
+// @route   POST /api/v1/bootcamps
 // @access  private
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
   // const body = [];
@@ -110,8 +110,8 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Get all bootcamps
-// @route   /api/v1/bootcamps
+// @desc    Update a bootcamp
+// @route   PUT /api/v1/bootcamps
 // @access  private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
@@ -125,8 +125,8 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: updatedBootcamp });
 });
 
-// @desc    Get all bootcamps
-// @route   /api/v1/bootcamps
+// @desc    Delete a bootcamp
+// @route   DELETE /api/v1/bootcamps
 // @access  private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
@@ -136,4 +136,40 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   }
   deletedBootcamp.remove();
   res.json({ success: true, data: {} });
+});
+
+// @desc    Upload bootcamp photo
+// @route   PUT /api/v1/bootcamps/:id/photo
+// @access  private
+exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
+  const id = req.params.id;
+  const bootcamp = await Bootcamp.findById(id);
+  if (!bootcamp) {
+    return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
+  }
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a photo`, 400));
+  }
+  const file = req.files.file;
+  if (!file.mimetype.startsWith('image')) {
+    return next(new ErrorResponse(`Please upload an image file`, 400));
+  }
+  if (!file.size > process.env.FILE_UPLOAD_SIZE) {
+    return next(
+      new ErrorResponse(`Size of image should be less than 1MB`, 400)
+    );
+  }
+  file.name = `photo_${bootcamp._id}.${file.mimetype.split('/')[1]}`;
+  console.log(file.name);
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+    if (err) {
+      console.log(err);
+      return next(new ErrorResponse('Internal Server Error', 500));
+    }
+    await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+    res.status(200).json({
+      success: true,
+      data: file.name,
+    });
+  });
 });
