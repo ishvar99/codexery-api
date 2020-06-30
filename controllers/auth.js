@@ -7,11 +7,7 @@ const asyncHandler = require('../middlewares/asyncHandler');
 // @access  public
 exports.registerUser = asyncHandler(async (req, res, next) => {
   const user = await User.create(req.body);
-  const token = user.getSignedJwtToken();
-  res.status(200).json({
-    success: true,
-    token,
-  });
+  sendTokenResponse(user, 200, res);
 });
 
 // @desc    Post Login User
@@ -30,9 +26,22 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   if (!match) {
     return next(new ErrorResponse('Invalid Credentials', 401));
   }
+  sendTokenResponse(user, 200, res);
+});
+
+const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
-  res.status(200).json({
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') {
+    options.secure = true;
+  }
+  res.status(200).cookie('token', token, options).json({
     success: true,
     token,
   });
-});
+};
