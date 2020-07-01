@@ -69,14 +69,23 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // @access  private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
-  const updatedBootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
+  let bootcamp = await Bootcamp.findById(id);
+  if (!bootcamp) {
+    return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
+  }
+  if (bootcamp.user !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User Id ${req.user.id} is not authorized to update this bootcamp`,
+        401
+      )
+    );
+  }
+  bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
-  if (!updatedBootcamp) {
-    return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
-  }
-  res.status(200).json({ success: true, data: updatedBootcamp });
+  res.status(200).json({ success: true, data: bootcamp });
 });
 
 // @desc    Delete a bootcamp
@@ -84,11 +93,19 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 // @access  private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
-  const deletedBootcamp = await Bootcamp.findById(id);
-  if (!deletedBootcamp) {
+  let bootcamp = await Bootcamp.findById(id);
+  if (!bootcamp) {
     return next(new ErrorResponse(`Cannot find resource with id ${id}`, 404));
   }
-  deletedBootcamp.remove();
+  if (bootcamp.user !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User Id ${req.user.id} is not authorized to update this bootcamp`,
+        401
+      )
+    );
+  }
+  bootcamp.remove();
   res.json({ success: true, data: {} });
 });
 
