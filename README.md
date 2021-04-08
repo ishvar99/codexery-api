@@ -2,6 +2,9 @@
 
 > Backend API for CodeXery, which is a bootcamp directory service
 
+## Documentation
+
+The Documentation of API [Docgen](https://ishvar99.github.io/codexery-api/)  [Postman](https://documenter.getpostman.com/view/5147515/TzCTa5jx)
 
 ## Install Dependencies
 
@@ -30,7 +33,3 @@ node seeder -d
 # Import all data
 node seeder -i
 ```
-
-## Documentation
-
-The Documentation of API [See](https://documenter.getpostman.com/view/5147515/TzCTa5jx)
