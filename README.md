@@ -4,7 +4,7 @@
 
 ## Documentation
 
-The Documentation of API [Docgen](https://ishvar99.github.io/codexery-api/)  [Postman](https://documenter.getpostman.com/view/5147515/TzCTa5jx)
+The Documentation of API - [Docgen](https://ishvar99.github.io/codexery-api/)  [Postman](https://documenter.getpostman.com/view/5147515/TzCTa5jx)
 
 ## Install Dependencies
 
